@@ -3,8 +3,13 @@ from pydantic import BaseModel
 from bson import ObjectId
 from pymongo import MongoClient
 import os
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
+
+@app.get("/")
+def home():
+    return JSONResponse(content={"message": "Hello from FastAPI on Vercel!"})
 
 # --- MongoDB Connection (Atlas via Environment Variables) ---
 MONGO_URI = os.getenv("MONGO_URI")
