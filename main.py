@@ -6,13 +6,20 @@ import os
 
 app = FastAPI()
 
-# --- MongoDB Connection (Atlas) ---
-MONGO_URI = os.getenv("mongodb+srv://poojasuresh1905_db_user:LFcNK2PZ1m16gUrN@cloud.ka3phqf.mongodb.net/")
+# --- MongoDB Connection (Atlas via Environment Variables) ---
+MONGO_URI = os.getenv("MONGO_URI")
+DB_NAME = os.getenv("DB_NAME")
+
+if not MONGO_URI:
+    raise ValueError("❌ MONGO_URI environment variable not found.")
+if not DB_NAME:
+    raise ValueError("❌ DB_NAME environment variable not found.")
+
 client = MongoClient(MONGO_URI)
-db = client["library_db"]
+db = client[DB_NAME]
 books_col = db["books"]
 
-# Helper to convert ObjectId to string
+# --- Helper ---
 def serialize_book(book):
     book["_id"] = str(book["_id"])
     return book
@@ -24,7 +31,7 @@ class Book(BaseModel):
     genre: str
     copies: int
 
-# --- API Routes ---
+# --- Routes ---
 @app.get("/")
 def root():
     return {"message": "✅ FastAPI Library API is running!"}
